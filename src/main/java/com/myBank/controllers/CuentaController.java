@@ -1,5 +1,6 @@
 package com.myBank.controllers;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -8,12 +9,10 @@ import javax.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.myBank.jwtSecurity.AutenticadorJWT;
 import com.myBank.model.entities.Cuenta;
 import com.myBank.model.entities.Divisa;
@@ -93,7 +92,7 @@ public class CuentaController {
 	}
 	
 	@PutMapping("/cuenta/actualizar")
-	public DTO actualizarCuenta(@RequestBody DatosActualizarCuenta datos) {
+	public DTO actualizarCuenta(@RequestBody DatosCrearOActualizarCuenta datos) {
 		DTO dto = new DTO();
 		dto.put("result", "fail");
 		try {
@@ -113,10 +112,39 @@ public class CuentaController {
 		}
 		return dto;
 	}
-			
+	
+	@PutMapping("/cuenta/crear")
+	public DTO crearCuenta(@RequestBody DatosCrearOActualizarCuenta datos, HttpServletRequest request) {
+		DTO dto = new DTO();
+		dto.put("result", "fail");
+		try {
+			int idUsuAutenticado = AutenticadorJWT.getIdUsuarioDesdeJwtIncrustadoEnRequest(request);
+			if (idUsuAutenticado != -1) { 
+				Usuario usuAutenticado = usuarioRepository.findById(idUsuAutenticado).get();
+				Cuenta cuenta = new Cuenta();
+				Divisa divisa = this.divisaRepository.findById(datos.idDivisa).get();
+	            
+				cuenta.setIban("ES");			
+				cuenta.setSaldo(0);
+				cuenta.setUsuario(usuAutenticado);
+				cuenta.setDescripcion(datos.descripcion);
+				cuenta.setDivisa(divisa);
+				this.cuentaRepository.save(cuenta);
+				
+				cuenta.setIban(cuenta.getIban() + new DecimalFormat("#.####################################").format(Math.floor(Math.random() * Math.pow(10, 14))) + "" + cuenta.getId());			
+				this.cuentaRepository.save(cuenta);
+
+				dto.put("result", "ok");
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return dto;
+	}
+				
 }
 
-class DatosActualizarCuenta {
+class DatosCrearOActualizarCuenta {
 	
 	int idCuenta;
 	String descripcion;
@@ -125,7 +153,7 @@ class DatosActualizarCuenta {
 	/**
 	 * Constructor
 	 */
-	public DatosActualizarCuenta(int idCuenta, String descripcion, int idDivisa) {
+	public DatosCrearOActualizarCuenta(int idCuenta, String descripcion, int idDivisa) {
 		super();
 		this.idCuenta = idCuenta;
 		this.descripcion = descripcion;

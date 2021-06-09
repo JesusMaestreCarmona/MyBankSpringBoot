@@ -27,6 +27,8 @@ public class Transferencia implements Serializable {
 
 	private float importe;
 
+	private boolean notificada;
+
 	//bi-directional many-to-one association to Cuenta
 	@ManyToOne(fetch=FetchType.LAZY)
 	@JoinColumn(name="cuenta_origen")
@@ -78,6 +80,14 @@ public class Transferencia implements Serializable {
 
 	public void setImporte(float importe) {
 		this.importe = importe;
+	}
+
+	public boolean getNotificada() {
+		return this.notificada;
+	}
+
+	public void setNotificada(boolean notificada) {
+		this.notificada = notificada;
 	}
 
 	public Cuenta getCuenta1() {

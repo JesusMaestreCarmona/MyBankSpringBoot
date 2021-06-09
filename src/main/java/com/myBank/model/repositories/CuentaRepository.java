@@ -16,4 +16,6 @@ public interface CuentaRepository extends CrudRepository<Cuenta, Integer> {
     public Cuenta findFirstByUsuarioOrderById(Usuario usuario);
     
     public Cuenta findByIban(String iban);
+    
+    public Cuenta findFirstByOrderByIdDesc();
 }

@@ -39,7 +39,9 @@ public class MyWebFilter implements Filter{
     			uriDePeticionWeb.equals("/usuario/autenticar") || // Web de autenticado, aunque no traiga JWT en la cabecera se le permite pasar
     			uriDePeticionWeb.equals("/usuario/getAutenticado") || // Web de recuperarUsuarioAutenticado, aunque no traiga JWT en la cabecera se le permite pasar
     			uriDePeticionWeb.equals("/usuario/buscarEmail") || // Web de buscarEMail, aunque no traiga JWT en la cabecera se le permite pasar
+    			uriDePeticionWeb.equals("/divisa/all") || // Web de allDivisas, aunque no traiga JWT en la cabecera se le permite pasar
     			uriDePeticionWeb.equals("/usuario/registrarUsuario") || // Web de registrarUsuario, aunque no traiga JWT en la cabecera se le permite pasar
+    			uriDePeticionWeb.equals("/cuenta/crear") || // Web de crearCuenta, aunque no traiga JWT en la cabecera se le permite pasar
     			idUsuarioAutenticadoMedianteJWT != -1) {     // Cualquier petición con un JWT válido, que tenga un id de usuario encriptado
     		filterChain.doFilter(servletRequest, servletResponse);  // Permito que la ejecución del request continúe su curso
     	}
