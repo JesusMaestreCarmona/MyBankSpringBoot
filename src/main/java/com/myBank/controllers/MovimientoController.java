@@ -42,7 +42,7 @@ public class MovimientoController {
 		try {
 			List<DTO> listaTransferenciasEnDTO = new ArrayList<DTO>();
 			List<Movimiento> movimientos = new ArrayList<Movimiento>();
-			movimientos = (List<Movimiento>) this.movimientoRepository.getAllMovimientosPaginacion(idCuenta, pagina, elementosPorPagina);
+			movimientos = (List<Movimiento>) this.movimientoRepository.getAllMovimientosPaginacion(idCuenta, pagina * elementosPorPagina, elementosPorPagina);
 			for (Movimiento movimiento : movimientos) {
 				listaTransferenciasEnDTO.add(DTO.getDTOFromMovimiento(movimiento));
 			}

@@ -37,7 +37,7 @@ public class TransferenciaController {
 		try {
 			List<DTO> listaTransferenciasEnDTO = new ArrayList<DTO>();
 			List<Transferencia> transferencias = new ArrayList<Transferencia>();
-			transferencias = (List<Transferencia>) this.transferenciaRepository.getAllTransferenciasPaginacion(idCuenta, pagina, elementosPorPagina);
+			transferencias = (List<Transferencia>) this.transferenciaRepository.getAllTransferenciasPaginacion(idCuenta, pagina * elementosPorPagina, elementosPorPagina);
 			for (Transferencia transferencia : transferencias) {
 				listaTransferenciasEnDTO.add(DTO.getDTOFromTransferencia(transferencia));
 			}
@@ -57,7 +57,7 @@ public class TransferenciaController {
 		try {
 			List<DTO> listaTransferenciasEnDTO = new ArrayList<DTO>();
 			List<Transferencia> transferencias = new ArrayList<Transferencia>();
-			transferencias = (List<Transferencia>) this.transferenciaRepository.getAllPeticionesPaginacion(idCuenta, pagina, elementosPorPagina);
+			transferencias = (List<Transferencia>) this.transferenciaRepository.getAllPeticionesPaginacion(idCuenta, pagina * elementosPorPagina, elementosPorPagina);
 			for (Transferencia transferencia : transferencias) {
 				listaTransferenciasEnDTO.add(DTO.getDTOFromTransferencia(transferencia));
 			}
