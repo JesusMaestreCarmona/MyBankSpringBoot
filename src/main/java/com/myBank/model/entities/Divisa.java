@@ -24,6 +24,10 @@ public class Divisa implements Serializable {
 	@OneToMany(mappedBy="divisa")
 	private List<Cuenta> cuentas;
 
+	//bi-directional many-to-one association to Movimiento
+	@OneToMany(mappedBy="divisa")
+	private List<Movimiento> movimientos;
+
 	public Divisa() {
 	}
 
@@ -63,6 +67,28 @@ public class Divisa implements Serializable {
 		cuenta.setDivisa(null);
 
 		return cuenta;
+	}
+
+	public List<Movimiento> getMovimientos() {
+		return this.movimientos;
+	}
+
+	public void setMovimientos(List<Movimiento> movimientos) {
+		this.movimientos = movimientos;
+	}
+
+	public Movimiento addMovimiento(Movimiento movimiento) {
+		getMovimientos().add(movimiento);
+		movimiento.setDivisa(this);
+
+		return movimiento;
+	}
+
+	public Movimiento removeMovimiento(Movimiento movimiento) {
+		getMovimientos().remove(movimiento);
+		movimiento.setDivisa(null);
+
+		return movimiento;
 	}
 
 }

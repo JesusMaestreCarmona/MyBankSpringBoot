@@ -92,7 +92,7 @@ public class CuentaController {
 	}
 	
 	@PutMapping("/cuenta/actualizar")
-	public DTO actualizarCuenta(@RequestBody DatosCrearOActualizarCuenta datos) {
+	public DTO actualizarCuenta(@RequestBody DatosCuenta datos) {
 		DTO dto = new DTO();
 		dto.put("result", "fail");
 		try {
@@ -114,7 +114,7 @@ public class CuentaController {
 	}
 	
 	@PutMapping("/cuenta/crear")
-	public DTO crearCuenta(@RequestBody DatosCrearOActualizarCuenta datos, HttpServletRequest request) {
+	public DTO crearCuenta(@RequestBody DatosCuenta datos, HttpServletRequest request) {
 		DTO dto = new DTO();
 		dto.put("result", "fail");
 		try {
@@ -144,21 +144,18 @@ public class CuentaController {
 				
 }
 
-class DatosCrearOActualizarCuenta {
+class DatosCuenta {
 	
 	int idCuenta;
 	String descripcion;
 	int idDivisa;
-
-	/**
-	 * Constructor
-	 */
-	public DatosCrearOActualizarCuenta(int idCuenta, String descripcion, int idDivisa) {
+	
+	public DatosCuenta(int idCuenta, String descripcion, int idDivisa) {
 		super();
 		this.idCuenta = idCuenta;
 		this.descripcion = descripcion;
 		this.idDivisa = idDivisa;
 	}
-
+	
 }
 

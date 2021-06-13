@@ -20,8 +20,6 @@ public class Movimiento implements Serializable {
 
 	private String descripcion;
 
-	private boolean estado;
-
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date fecha;
 
@@ -34,6 +32,10 @@ public class Movimiento implements Serializable {
 	//bi-directional many-to-one association to Cuenta
 	@ManyToOne(fetch=FetchType.LAZY)
 	private Cuenta cuenta;
+
+	//bi-directional many-to-one association to Divisa
+	@ManyToOne(fetch=FetchType.LAZY)
+	private Divisa divisa;
 
 	public Movimiento() {
 	}
@@ -52,14 +54,6 @@ public class Movimiento implements Serializable {
 
 	public void setDescripcion(String descripcion) {
 		this.descripcion = descripcion;
-	}
-
-	public boolean getEstado() {
-		return this.estado;
-	}
-
-	public void setEstado(boolean estado) {
-		this.estado = estado;
 	}
 
 	public Date getFecha() {
@@ -100,6 +94,14 @@ public class Movimiento implements Serializable {
 
 	public void setCuenta(Cuenta cuenta) {
 		this.cuenta = cuenta;
+	}
+
+	public Divisa getDivisa() {
+		return this.divisa;
+	}
+
+	public void setDivisa(Divisa divisa) {
+		this.divisa = divisa;
 	}
 
 }

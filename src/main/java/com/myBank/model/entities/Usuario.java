@@ -2,6 +2,7 @@ package com.myBank.model.entities;
 
 import java.io.Serializable;
 import javax.persistence.*;
+import java.util.Date;
 import java.util.List;
 
 
@@ -29,7 +30,9 @@ public class Usuario implements Serializable {
 
 	private String email;
 
-	private String estado;
+	@Temporal(TemporalType.TIMESTAMP)
+	@Column(name="fecha_nac")
+	private Date fechaNac;
 
 	@Lob
 	private byte[] imagen;
@@ -45,10 +48,6 @@ public class Usuario implements Serializable {
 	//bi-directional many-to-one association to Cuenta
 	@OneToMany(mappedBy="usuario")
 	private List<Cuenta> cuentas;
-
-	//bi-directional many-to-one association to Rol
-	@ManyToOne(fetch=FetchType.LAZY)
-	private Rol rol;
 
 	public Usuario() {
 	}
@@ -101,12 +100,12 @@ public class Usuario implements Serializable {
 		this.email = email;
 	}
 
-	public String getEstado() {
-		return this.estado;
+	public Date getFechaNac() {
+		return this.fechaNac;
 	}
 
-	public void setEstado(String estado) {
-		this.estado = estado;
+	public void setFechaNac(Date fechaNac) {
+		this.fechaNac = fechaNac;
 	}
 
 	public byte[] getImagen() {
@@ -169,14 +168,6 @@ public class Usuario implements Serializable {
 		cuenta.setUsuario(null);
 
 		return cuenta;
-	}
-
-	public Rol getRol() {
-		return this.rol;
-	}
-
-	public void setRol(Rol rol) {
-		this.rol = rol;
 	}
 
 }

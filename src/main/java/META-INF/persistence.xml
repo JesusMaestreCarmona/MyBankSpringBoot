@@ -4,7 +4,6 @@
 		<class>com.myBank.model.entities.Cuenta</class>
 		<class>com.myBank.model.entities.Divisa</class>
 		<class>com.myBank.model.entities.Movimiento</class>
-		<class>com.myBank.model.entities.Rol</class>
 		<class>com.myBank.model.entities.Transferencia</class>
 		<class>com.myBank.model.entities.Usuario</class>
 	</persistence-unit>

@@ -56,7 +56,7 @@ public class MovimientoController {
 	}
 
 	@PutMapping("/movimiento/realizar")
-	public DTO realizarMovimiento(@RequestBody DatosNuevoMovimiento datos) {
+	public DTO realizarMovimiento(@RequestBody DatosMovimiento datos) {
 		DTO dto = new DTO();
 		dto.put("result", "fail");
 		try {
@@ -87,7 +87,7 @@ public class MovimientoController {
 		return dto;
 	}
 	
-	private void realizarTransferencia(DatosNuevoMovimiento datos) {
+	private void realizarTransferencia(DatosMovimiento datos) {
 		Date fecha = new Date();
 		Cuenta cuenta_origen = this.cuentaRepository.findById(datos.idCuenta).get();
 		Cuenta cuenta_destino = this.cuentaRepository.findByIban(datos.iban);
@@ -102,7 +102,7 @@ public class MovimientoController {
 		this.actualizarCuentas(cuenta_origen, cuenta_destino);
 	}
 	
-	private void realizarPeticion(DatosNuevoMovimiento datos) {
+	private void realizarPeticion(DatosMovimiento datos) {
 		Date fecha = new Date();
 		Cuenta cuenta_origen = this.cuentaRepository.findByIban(datos.iban);
 		Cuenta cuenta_destino = this.cuentaRepository.findById(datos.idCuenta).get();
@@ -110,7 +110,7 @@ public class MovimientoController {
 		this.insertarNuevaTransferencia(datos.importe, datos.descripcion, fecha, cuenta_origen, cuenta_destino, false, false);
 	}
 		
-	private void retirarDinero(DatosNuevoMovimiento datos) {
+	private void retirarDinero(DatosMovimiento datos) {
 		Date fecha = new Date();
 		
 		Cuenta cuenta = this.cuentaRepository.findById(datos.idCuenta).get();
@@ -120,7 +120,7 @@ public class MovimientoController {
 		this.insertarNuevoMovimiento(datos.importe, datos.descripcion, fecha, cuenta, "Retiro");
 	}
 	
-	private void ingresarDinero(DatosNuevoMovimiento datos) {
+	private void ingresarDinero(DatosMovimiento datos) {
 		Date fecha = new Date();
 		
 		Cuenta cuenta = this.cuentaRepository.findById(datos.idCuenta).get();
@@ -130,7 +130,7 @@ public class MovimientoController {
 		this.insertarNuevoMovimiento(datos.importe, datos.descripcion, fecha, cuenta, "Ingreso");
 	}
 	
-	private void aceptarPeticion (DatosNuevoMovimiento datos) {		
+	private void aceptarPeticion (DatosMovimiento datos) {		
 		Transferencia transferencia = this.transferenciaRepository.findById(datos.idCuenta).get();
 		transferencia.setEstado(true);
 		transferencia.setFecha(new Date());
@@ -148,7 +148,7 @@ public class MovimientoController {
 		this.actualizarCuentas(cuenta_origen, cuenta_destino);
 	}
 	
-	private void rechazarPeticion (DatosNuevoMovimiento datos) {		 
+	private void rechazarPeticion (DatosMovimiento datos) {		 
 		this.transferenciaRepository.deleteById(datos.idCuenta);
 	}
 	
@@ -170,9 +170,9 @@ public class MovimientoController {
 		movimiento.setTipo(tipo);
 		movimiento.setFecha(fecha);
 		movimiento.setImporte(importe);
+		movimiento.setDivisa(cuenta.getDivisa());
 		movimiento.setSaldo(cuenta.getSaldo());
 		movimiento.setDescripcion(descripcion);
-		movimiento.setEstado(true);
 		this.movimientoRepository.save(movimiento);
 	}
 	
@@ -183,23 +183,21 @@ public class MovimientoController {
 
 }
 
-class DatosNuevoMovimiento {
+class DatosMovimiento {
 	
 	int idCuenta;
 	String tipo;
 	String iban;
 	String descripcion;
 	float importe;
-	int divisa;
 	
-	public DatosNuevoMovimiento(int idCuenta, String tipo, String iban, String descripcion, float importe, int divisa) {
+	public DatosMovimiento(int idCuenta, String tipo, String iban, String descripcion, float importe) {
 		super();
 		this.idCuenta = idCuenta;
 		this.tipo = tipo;
 		this.iban = iban;
 		this.descripcion = descripcion;
 		this.importe = importe;
-		this.divisa = divisa;
 	}
 	
 }

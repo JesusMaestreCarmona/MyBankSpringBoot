@@ -1,6 +1,10 @@
 package com.myBank.controllers;
 
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.tomcat.util.codec.binary.Base64;
@@ -14,7 +18,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.myBank.jwtSecurity.AutenticadorJWT;
 import com.myBank.model.entities.Usuario;
-import com.myBank.model.repositories.RolRepository;
 import com.myBank.model.repositories.UsuarioRepository;
 
 @CrossOrigin
@@ -23,8 +26,6 @@ public class UsuarioController {
 	
 	@Autowired
 	UsuarioRepository usuarioRepository;
-	@Autowired
-	RolRepository rolRepository;
 	
 	/**
 	 * Autentica un usuario, dados su datos de acceso: nombre de usuario y contraseña
@@ -60,7 +61,7 @@ public class UsuarioController {
 	}
 	
 	@PutMapping("/usuario/actualizarDatosUsuario")
-	public DTO actualizarDatosUsuario(@RequestBody DatosParaNuevoUsuario datosNuevoUsuario, HttpServletRequest request) {
+	public DTO actualizarDatosUsuario(@RequestBody DatosUsuario datosNuevoUsuario, HttpServletRequest request) {
 		DTO dto = new DTO();
 		dto.put("result", "fail");
 		try {
@@ -71,11 +72,12 @@ public class UsuarioController {
 				usuAutenticado.setApellido1(datosNuevoUsuario.apellido1);
 				usuAutenticado.setApellido2(datosNuevoUsuario.apellido2);
 				if (datosNuevoUsuario.imagen != null) usuAutenticado.setImagen(Base64.decodeBase64(datosNuevoUsuario.imagen));
+				usuAutenticado.setFechaNac(new Date(datosNuevoUsuario.fecha_nac));
 				usuAutenticado.setTelefono(datosNuevoUsuario.telefono);
 				usuAutenticado.setDireccion(datosNuevoUsuario.direccion);
 				usuAutenticado.setLocalidad(datosNuevoUsuario.localidad);
 				usuAutenticado.setCodigoPostal(datosNuevoUsuario.codigo_postal);
-				usuAutenticado.setEstado(datosNuevoUsuario.estado);
+				if (datosNuevoUsuario.password != "") usuAutenticado.setPassword(datosNuevoUsuario.password);
 				this.usuarioRepository.save(usuAutenticado);
 			}
 			dto.put("result", "ok");
@@ -95,7 +97,7 @@ public class UsuarioController {
 	}
 	
 	@PutMapping("/usuario/registrarUsuario")
-	public DTO registrarUsuario (@RequestBody DatosParaNuevoUsuario datosNuevoUsuario) {
+	public DTO registrarUsuario (@RequestBody DatosUsuario datosNuevoUsuario) {
 		DTO dto = new DTO();
 		dto.put("result", "fail");
 		try {
@@ -105,13 +107,12 @@ public class UsuarioController {
 			usuarioARegistrar.setApellido2(datosNuevoUsuario.apellido2);
 			usuarioARegistrar.setEmail(datosNuevoUsuario.email);
 			usuarioARegistrar.setPassword(datosNuevoUsuario.password);
-			usuarioARegistrar.setRol(this.rolRepository.findById(2).get());
 			if (datosNuevoUsuario.imagen != null) usuarioARegistrar.setImagen(Base64.decodeBase64(datosNuevoUsuario.imagen));
+			usuarioARegistrar.setFechaNac(new Date(datosNuevoUsuario.fecha_nac));
 			usuarioARegistrar.setTelefono(datosNuevoUsuario.telefono);
 			usuarioARegistrar.setDireccion(datosNuevoUsuario.direccion);
 			usuarioARegistrar.setLocalidad(datosNuevoUsuario.localidad);
 			usuarioARegistrar.setCodigoPostal(datosNuevoUsuario.codigo_postal);
-			usuarioARegistrar.setEstado(datosNuevoUsuario.estado);
 			this.usuarioRepository.save(usuarioARegistrar);
 			dto.put("result", "ok");
 		} catch (Exception e) {
@@ -139,7 +140,7 @@ class DatosAutenticacionUsuario {
 	}
 }
 
-class DatosParaNuevoUsuario {
+class DatosUsuario {
 	
 	String email;
 	String password;
@@ -147,14 +148,14 @@ class DatosParaNuevoUsuario {
 	String apellido1;
 	String apellido2;
 	String imagen;
+	long fecha_nac;
 	String telefono;
 	String direccion;
 	String localidad;
 	String codigo_postal;
-	String estado;
 	
-	public DatosParaNuevoUsuario(String email, String password, String nombre, String apellido1, String apellido2, String imagen,
-			String telefono, String direccion, String localidad, String codigo_postal, String estado) {
+	public DatosUsuario(String email, String password, String nombre, String apellido1, String apellido2, String imagen,
+			String telefono, String direccion, String localidad, String codigo_postal, long fecha_nac) {
 		super();
 		this.email = email;
 		this.password = password;
@@ -166,6 +167,6 @@ class DatosParaNuevoUsuario {
 		this.direccion = direccion;
 		this.localidad = localidad;
 		this.codigo_postal = codigo_postal;
-		this.estado = estado;
+		this.fecha_nac = fecha_nac;
 	}
 }

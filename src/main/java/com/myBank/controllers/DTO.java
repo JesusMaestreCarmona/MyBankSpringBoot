@@ -22,9 +22,9 @@ public class DTO extends HashMap<String, Object> {
 			dto.put("tipo", movimiento.getTipo());
 			dto.put("fecha", movimiento.getFecha());
 			dto.put("importe", movimiento.getImporte());
+			dto.put("divisa", getDTOFromDivisa(movimiento.getDivisa()));
 			dto.put("saldo", movimiento.getSaldo());
 			dto.put("descripcion", movimiento.getDescripcion());
-			dto.put("estado", movimiento.getEstado());
 		}
 		return dto;
 	}
@@ -65,13 +65,12 @@ public class DTO extends HashMap<String, Object> {
 			dto.put("apellido2", usuario.getApellido2());
 			dto.put("email", usuario.getEmail());
 			dto.put("password", usuario.getPassword());
-			dto.put("rol", usuario.getRol().getId());
 			if (imagen) dto.put("imagen", usuario.getImagen());
+			dto.put("fecha_nac", usuario.getFechaNac());
 			dto.put("telefono", usuario.getTelefono());
 			dto.put("direccion", usuario.getDireccion());
 			dto.put("localidad", usuario.getLocalidad());
 			dto.put("codigo_postal", usuario.getCodigoPostal());
-			dto.put("estado", usuario.getEstado());
 		}
 		return dto;
 	}
