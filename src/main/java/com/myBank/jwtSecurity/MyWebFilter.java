@@ -36,6 +36,7 @@ public class MyWebFilter implements Filter{
     	// También dejo pasar si se está requiriendo un contenido publicado en la carpeta /webapp (contenido estático: html, css, js, etc)
     	if (metodoRequerido.equalsIgnoreCase("OPTIONS") || // Si se recibe una petición options, se deja pasar por el filtro
     			uriDePeticionWeb.startsWith("/webapp") ||     // Se intenta acceder a la carpeta de contenido estático "/webapp".
+    			uriDePeticionWeb.startsWith("/mybank") ||     // Se intenta acceder a la carpeta de contenido estático "/webapp".
     			uriDePeticionWeb.equals("/usuario/autenticar") || // Web de autenticado, aunque no traiga JWT en la cabecera se le permite pasar
     			uriDePeticionWeb.equals("/usuario/getAutenticado") || // Web de recuperarUsuarioAutenticado, aunque no traiga JWT en la cabecera se le permite pasar
     			uriDePeticionWeb.equals("/usuario/buscarEmail") || // Web de buscarEMail, aunque no traiga JWT en la cabecera se le permite pasar
@@ -43,6 +44,18 @@ public class MyWebFilter implements Filter{
     			uriDePeticionWeb.equals("/usuario/registrarUsuario") || // Web de registrarUsuario, aunque no traiga JWT en la cabecera se le permite pasar
     			uriDePeticionWeb.equals("/cuenta/crear") || // Web de crearCuenta, aunque no traiga JWT en la cabecera se le permite pasar
     			idUsuarioAutenticadoMedianteJWT != -1) {     // Cualquier petición con un JWT válido, que tenga un id de usuario encriptado
+    		if (uriDePeticionWeb.equals("/mybank") ||
+    				uriDePeticionWeb.equals("/mybank/") ||
+    				uriDePeticionWeb.equals("/mybank/login") ||
+    				uriDePeticionWeb.equals("/mybank/registro") ||
+    				uriDePeticionWeb.equals("/mybank/listado-transferencias") ||
+    				uriDePeticionWeb.equals("/mybank/listado-peticiones") ||
+    				uriDePeticionWeb.equals("/mybank/listado-movimientos") ||
+    				uriDePeticionWeb.equals("/mybank/seleccion-movimiento") ||
+    				uriDePeticionWeb.equals("/mybank/modificar-datos")) {
+            	HttpServletResponse response = (HttpServletResponse) servletResponse; // Obtengo el objeto response de la petición request
+            	response.sendRedirect("/mybank/index.html");
+    		}
     		filterChain.doFilter(servletRequest, servletResponse);  // Permito que la ejecución del request continúe su curso
     	}
     	else {
