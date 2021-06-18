@@ -1,12 +1,16 @@
 package com.myBank.controllers;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Random;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -34,20 +38,33 @@ public class MovimientoController {
 	MovimientoRepository movimientoRepository;
 	@Autowired
 	RestService restService;
-	
-	@GetMapping("/movimiento/getAllMovimientosPaginacion")
-	public DTO getAllMovimientosPaginacion (int idCuenta, int pagina, int elementosPorPagina) {		
+		
+	@PostMapping("/movimiento/getAllMovimientosPaginacion")
+	public DTO getAllMovimientosPaginacion (@RequestBody DatosListadoMovimiento datos) {		
 		DTO dto = new DTO();
 		dto.put("result", "fail");
 		try {
-			List<DTO> listaTransferenciasEnDTO = new ArrayList<DTO>();
+			List<DTO> listaMovimientosEnDTO = new ArrayList<DTO>();
 			List<Movimiento> movimientos = new ArrayList<Movimiento>();
-			movimientos = (List<Movimiento>) this.movimientoRepository.getAllMovimientosPaginacion(idCuenta, pagina * elementosPorPagina, elementosPorPagina);
-			for (Movimiento movimiento : movimientos) {
-				listaTransferenciasEnDTO.add(DTO.getDTOFromMovimiento(movimiento));
+			float importe = -1;
+			int dia = -1, mes = 1, anno = 0;
+			for (Filtro filtro : datos.filtros) {
+				if (filtro.name.equals("importe") && filtro.value != null) importe = Float.parseFloat(filtro.value);
+				if (filtro.name.equals("fecha") && filtro.value != null) { 
+					Date date = new Date(Long.parseLong(filtro.value));
+					Calendar cal = Calendar.getInstance();
+					cal.setTime(date);
+					dia = cal.get(Calendar.DAY_OF_MONTH);
+					mes += cal.get(Calendar.MONTH);
+					anno = cal.get(Calendar.YEAR);
+				}
 			}
-			dto.put("movimientos", listaTransferenciasEnDTO);
-			dto.put("totalMovimientos", this.movimientoRepository.getCountMovimientosCuenta(idCuenta));
+			movimientos = (List<Movimiento>) this.movimientoRepository.getAllMovimientosPaginacionConFiltros(datos.idCuenta, importe, importe, dia, mes, anno, dia, datos.pagina * datos.elementosPorPagina, datos.elementosPorPagina);
+			for (Movimiento movimiento : movimientos) {
+				listaMovimientosEnDTO.add(DTO.getDTOFromMovimiento(movimiento));
+			}
+			dto.put("movimientos", listaMovimientosEnDTO);
+			dto.put("totalMovimientos", this.movimientoRepository.getCountMovimientosCuentaConFiltros(datos.idCuenta, importe, importe, dia, mes, anno, dia));
 			dto.put("result", "ok");
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -201,3 +218,21 @@ class DatosMovimiento {
 	}
 	
 }
+
+class DatosListadoMovimiento {
+	
+	int idCuenta;
+	int pagina;
+	int elementosPorPagina;
+	Filtro[] filtros;
+	
+	public DatosListadoMovimiento(int idCuenta, int pagina, int elementosPorPagina, Filtro[] filtros) {
+		super();
+		this.idCuenta = idCuenta;
+		this.pagina = pagina;
+		this.elementosPorPagina = elementosPorPagina;
+		this.filtros = filtros;
+	}
+	
+}
+

@@ -19,31 +19,25 @@ public class MyWebFilter implements Filter{
     public void init(FilterConfig filterConfig) throws ServletException {
     }
     
-    /**
-     * 
-     */
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
-    	HttpServletRequest request = (HttpServletRequest) servletRequest; // Obtengo un objeto request, con la petició recibida desde el cliente
-    	String uriDePeticionWeb = request.getRequestURI(); // Obtengo la URL a la que se dirige la petición web
-    	String metodoRequerido = request.getMethod(); // Obtengo el método de la petición: GET, POST, PUT, DELETE, OPTIONS, etc...
-    	int idUsuarioAutenticadoMedianteJWT = AutenticadorJWT.getIdUsuarioDesdeJwtIncrustadoEnRequest(request); // Obtengo un posible id de usuario
-    		// contenido dentro de un JWT, guardado en un header del request realizado
+    	HttpServletRequest request = (HttpServletRequest) servletRequest; 
+    	String uriDePeticionWeb = request.getRequestURI(); 
+    	String metodoRequerido = request.getMethod(); 
+    	int idUsuarioAutenticadoMedianteJWT = AutenticadorJWT.getIdUsuarioDesdeJwtIncrustadoEnRequest(request);
     	     
     	
     	System.out.println("Log - request: " + uriDePeticionWeb + " - " + request.getMethod());  
-    	// Si se accede a la autenticación de usuario o ya existe un usuario autenticado, dejo pasar la petición
-    	// También dejo pasar si se está requiriendo un contenido publicado en la carpeta /webapp (contenido estático: html, css, js, etc)
-    	if (metodoRequerido.equalsIgnoreCase("OPTIONS") || // Si se recibe una petición options, se deja pasar por el filtro
-    			uriDePeticionWeb.startsWith("/webapp") ||     // Se intenta acceder a la carpeta de contenido estático "/webapp".
-    			uriDePeticionWeb.startsWith("/mybank") ||     // Se intenta acceder a la carpeta de contenido estático "/webapp".
-    			uriDePeticionWeb.equals("/usuario/autenticar") || // Web de autenticado, aunque no traiga JWT en la cabecera se le permite pasar
-    			uriDePeticionWeb.equals("/usuario/getAutenticado") || // Web de recuperarUsuarioAutenticado, aunque no traiga JWT en la cabecera se le permite pasar
-    			uriDePeticionWeb.equals("/usuario/buscarEmail") || // Web de buscarEMail, aunque no traiga JWT en la cabecera se le permite pasar
-    			uriDePeticionWeb.equals("/divisa/all") || // Web de allDivisas, aunque no traiga JWT en la cabecera se le permite pasar
-    			uriDePeticionWeb.equals("/usuario/registrarUsuario") || // Web de registrarUsuario, aunque no traiga JWT en la cabecera se le permite pasar
-    			uriDePeticionWeb.equals("/cuenta/crear") || // Web de crearCuenta, aunque no traiga JWT en la cabecera se le permite pasar
-    			idUsuarioAutenticadoMedianteJWT != -1) {     // Cualquier petición con un JWT válido, que tenga un id de usuario encriptado
+    	if (metodoRequerido.equalsIgnoreCase("OPTIONS") || 
+    			uriDePeticionWeb.startsWith("/webapp") || 
+    			uriDePeticionWeb.startsWith("/mybank") || 
+    			uriDePeticionWeb.equals("/usuario/autenticar") ||
+    			uriDePeticionWeb.equals("/usuario/getAutenticado") || 
+    			uriDePeticionWeb.equals("/usuario/buscarEmail") ||
+    			uriDePeticionWeb.equals("/divisa/all") ||
+    			uriDePeticionWeb.equals("/usuario/registrarUsuario") ||
+    			uriDePeticionWeb.equals("/cuenta/crear") || 
+    			idUsuarioAutenticadoMedianteJWT != -1) {   
     		if (uriDePeticionWeb.equals("/mybank") ||
     				uriDePeticionWeb.equals("/mybank/") ||
     				uriDePeticionWeb.equals("/mybank/login") ||
@@ -53,15 +47,14 @@ public class MyWebFilter implements Filter{
     				uriDePeticionWeb.equals("/mybank/listado-movimientos") ||
     				uriDePeticionWeb.equals("/mybank/seleccion-movimiento") ||
     				uriDePeticionWeb.equals("/mybank/modificar-datos")) {
-            	HttpServletResponse response = (HttpServletResponse) servletResponse; // Obtengo el objeto response de la petición request
+            	HttpServletResponse response = (HttpServletResponse) servletResponse;
             	response.sendRedirect("/mybank/index.html");
     		}
-    		filterChain.doFilter(servletRequest, servletResponse);  // Permito que la ejecución del request continúe su curso
+    		filterChain.doFilter(servletRequest, servletResponse);
     	}
     	else {
-        	// En caso contrario, deniego el acceso
-        	HttpServletResponse response = (HttpServletResponse) servletResponse; // Obtengo el objeto response de la petición request
-			response.sendError(403, "No autorizado");   // Establezco un estado de 403 - Acceso prohibido.
+        	HttpServletResponse response = (HttpServletResponse) servletResponse;
+			response.sendError(403, "No autorizado"); 
     	}
     }
  

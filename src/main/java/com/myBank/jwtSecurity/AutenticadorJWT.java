@@ -11,20 +11,14 @@ import io.jsonwebtoken.impl.crypto.MacProvider;
 
 public class AutenticadorJWT {
 	
-	private static Key key = null; // Clave de encriptación que usaremos para generar el JWT. Diferente en cada ejecución
+	private static Key key = null; 
 	
-	/**
-	 * A partir de un usuario, nos genera un JWT que contiene el id del mismo 
-	 */
 	public static String codificaJWT (Usuario u) {
 		String jws = Jwts.builder().setSubject("" + u.getId()).
 				signWith(SignatureAlgorithm.HS512, getGeneratedKey()).compact();
 		return jws;
 	}
 	
-	/**
-	 * A partir de un jwt, nos localiza el id de usuario cuyo id mantiene en su interior
-	 */
 	public static int getIdUsuarioDesdeJWT (String jwt) {
 		try {
 			String stringIdUsuario = Jwts.parser().setSigningKey(getGeneratedKey()).parseClaimsJws(jwt).getBody().getSubject();
@@ -38,9 +32,6 @@ public class AutenticadorJWT {
 	}
 	
 	
-	/**
-	 * Obtiene el id de un usuario almacenado en un JWT que proviene de un request
-	 */
 	public static int getIdUsuarioDesdeJwtIncrustadoEnRequest (HttpServletRequest request) {
 		String autHeader = request.getHeader("Authorization");
 		if (autHeader != null && autHeader.length() > 8) {
@@ -48,14 +39,10 @@ public class AutenticadorJWT {
 			return getIdUsuarioDesdeJWT(jwt);
 		}
 		else {
-			return -1; // Bandera, ha sido imposible obtener el id del usuario
+			return -1;
 		}
 	}
 	
-	/**
-	 * Genera una nueva clave, cada vez que se inicia el servidor, para encriptar los JWT
-	 * @return
-	 */
 	private static Key getGeneratedKey () {
 		if (key == null) {
 			key = MacProvider.generateKey();

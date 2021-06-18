@@ -1,9 +1,7 @@
 package com.myBank.controllers;
 
 
-import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Locale;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -27,20 +25,15 @@ public class UsuarioController {
 	@Autowired
 	UsuarioRepository usuarioRepository;
 	
-	/**
-	 * Autentica un usuario, dados su datos de acceso: nombre de usuario y contraseña
-	 */
 	@PostMapping("/usuario/autenticar")
 	public DTO autenticaUsuario (@RequestBody DatosAutenticacionUsuario datos) {
-		DTO dto = new DTO(); // Voy a devolver un dto
+		DTO dto = new DTO();
 
-		// Intento localizar un usuario a partir de su nombre de usuario y su password
 		Usuario usuAutenticado = usuarioRepository.findByEmailAndPassword(datos.email, datos.password);
 		if (usuAutenticado != null) {
 			dto.put("jwt", AutenticadorJWT.codificaJWT(usuAutenticado));
 		}
 
-		// Finalmente devuelvo el JWT creado, puede estar vacío si la autenticación no ha funcionado
 		return dto;
 	}
 	
@@ -48,15 +41,13 @@ public class UsuarioController {
 	public DTO getUsuarioAutenticado (boolean imagen, HttpServletRequest request) {
 		DTO dtoResultado = null;
 		
-		int idUsuAutenticado = AutenticadorJWT.getIdUsuarioDesdeJwtIncrustadoEnRequest(request); // Obtengo el usuario autenticado, por su JWT
+		int idUsuAutenticado = AutenticadorJWT.getIdUsuarioDesdeJwtIncrustadoEnRequest(request);
 		
-		// Intento localizar un usuario a partir de su id
 		if (idUsuAutenticado != -1) {
 			Usuario usuAutenticado = usuarioRepository.findById(idUsuAutenticado).get();
 			dtoResultado = DTO.getDTOFromUsuario(usuAutenticado, imagen);
 		}
 
-		// Finalmente devuelvo el JWT creado, puede estar vacío si la autenticación no ha funcionado
 		return dtoResultado;
 	}
 	
@@ -123,16 +114,10 @@ public class UsuarioController {
 		
 }
 
-/**
- * Clase que contiene los datos de autenticacion del usuario
- */
 class DatosAutenticacionUsuario {
 	String email;
 	String password;
 
-	/**
-	 * Constructor
-	 */
 	public DatosAutenticacionUsuario(String email, String password) {
 		super();
 		this.email = email;
